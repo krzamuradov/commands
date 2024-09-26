@@ -1,6 +1,9 @@
+```
 apt install mc curl git zip unzip openssh-server -y
+```
 #NGINX
 apt install nginx -y
+
 server {
     listen 80 default_server;
     server_name _;
