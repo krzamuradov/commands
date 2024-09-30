@@ -60,7 +60,7 @@ systemctl start mariadb
 systemctl status mariadb
 mysql -u root
 FLUSH PRIVILEGES;
-ALTER USER 'root'@'localhost' IDENTIFIED BY 'Algo#3136';
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'password';
 systemctl unset-environment MYSQLD_OPTS
 systemctl restart mariadb
 
