@@ -1,6 +1,51 @@
 ```
 apt install mc curl git zip unzip openssh-server -y
 ```
+```
+server {
+    listen 80;
+    server_name 10.96.222.173;
+
+    root /srv/normativ/frontend/dist;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|ttf|woff|woff2|eot)$ {
+        root /srv/normativ/frontend/dist;
+        expires 30d;
+        add_header Cache-Control "public";
+    }
+
+    location /api/ {
+        root /srv/normativ/backend/public;
+        try_files $uri $uri/ /index.php?$query_string;
+
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+    }
+
+    location ~ \.php$ {
+        root /srv/normativ/backend/public;
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+
+    # Логи
+    access_log /var/log/nginx/vue_access.log;
+    error_log /var/log/nginx/vue_error.log;
+}
+```
+
+
 #NGINX
 apt install nginx -y
 
