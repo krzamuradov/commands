@@ -1,3 +1,4 @@
+
 # BASE DEPENDENCIES
 ```
 apt install mc curl git zip unzip openssh-server -y
@@ -156,8 +157,9 @@ sudo sshfs -o allow_other root@10.96.222.13:/var/www/html /mnt/projects/crm/
 ```
 # SQLITE3
 
-## extension=pdo_sqlite
-extension=sqlite3
+> [!NOTE]
+> Нужно раскомментировать в php.ini
+> ;extension=pdo_sqlite ;extension=sqlite3
 ```
 sudo apt-get update
 sudo apt-get install php-sqlite3
