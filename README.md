@@ -137,6 +137,14 @@ apt install npm -y
 npm install
 npm install vue @vitejs/plugin-vue bootstrap vuex vue-router @fortawesome/fontawesome-free
 ```
+
+```
+npm init -y
+npm login
+npm publish
+npm verison patch
+```
+
 # LARAVEL INSTALL
 ```
 composer create-project --prefer-dist laravel/laravel ./ ^10
