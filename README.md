@@ -139,7 +139,7 @@ npm install vue @vitejs/plugin-vue bootstrap vuex vue-router @fortawesome/fontaw
 ```
 # NPM publish package
 ```
-npm init -y
+npm init -y //test
 npm login
 npm publish
 npm verison patch
