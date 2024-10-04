@@ -137,7 +137,7 @@ apt install npm -y
 npm install
 npm install vue @vitejs/plugin-vue bootstrap vuex vue-router @fortawesome/fontawesome-free
 ```
-
+# NPM publish package
 ```
 npm init -y
 npm login
