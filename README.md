@@ -143,6 +143,7 @@ npm init -y
 npm login
 npm publish
 npm verison patch
+npm publish --access=public
 ```
 
 # LARAVEL INSTALL
