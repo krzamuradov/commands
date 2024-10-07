@@ -226,3 +226,26 @@ const vuetify = createVuetify({
 
 createApp(App).use(vuetify).mount('#app');
 ```
+
+# PHP PROD SERVICE PROVIDER
+```
+class AppServiceProvider extends ServiceProvider
+{
+    /**
+     * Register any application services.
+     */
+    public function register(): void
+    {
+        //
+    }
+
+    /**
+     * Bootstrap any application services.
+     */
+    public function boot(): void
+    {
+        if($this->app->environment('production')){
+            URL::forceScheme('https');
+        }
+    }
+```
