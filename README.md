@@ -249,3 +249,15 @@ class AppServiceProvider extends ServiceProvider
         }
     }
 ```
+
+# LARAVEL VALIDATION CUSTOM RESPONSE
+```
+ protected function failedValidation(Validator $validator)
+    {
+        $response = new JsonResponse([
+            'errors' => $validator->errors(),
+        ], 422);
+
+        throw new ValidationException($validator, $response);
+    }
+```
