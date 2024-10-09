@@ -252,6 +252,11 @@ class AppServiceProvider extends ServiceProvider
 
 # LARAVEL VALIDATION CUSTOM RESPONSE
 ```
+
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\ValidationException;
+
  protected function failedValidation(Validator $validator)
     {
         $response = new JsonResponse([
