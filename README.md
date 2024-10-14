@@ -266,3 +266,19 @@ use Illuminate\Validation\ValidationException;
         throw new ValidationException($validator, $response);
     }
 ```
+
+# VSCODE SETTINGS JS IN LARAVEL PROJECT 
+```
+// CREATE jsconfig.json
+
+{
+    "compilerOptions": {
+        "baseUrl": "./",
+        "paths": {
+            "@/*": ["resources/js/*"]
+        }
+    },
+    "exclude": ["node_modules", "public"]
+}
+
+```
