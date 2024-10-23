@@ -282,3 +282,8 @@ use Illuminate\Validation\ValidationException;
 }
 
 ```
+
+# COMPOSER PLUGIN FOR INTERFACE SERVICE 
+```
+composer require theanik/laravel-more-command --dev
+```
