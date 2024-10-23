@@ -168,7 +168,8 @@ sudo sshfs -o allow_other root@10.96.222.13:/var/www/html /mnt/projects/crm/
 
 > [!NOTE]
 > Нужно раскомментировать в php.ini
-> ;extension=pdo_sqlite ;extension=sqlite3
+> ;extension=pdo_sqlite
+> ;extension=sqlite3
 ```
 sudo apt-get update
 sudo apt-get install php-sqlite3
