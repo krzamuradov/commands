@@ -312,3 +312,46 @@ public/
 ```
 composer require theanik/laravel-more-command --dev
 ```
+
+# DATE FORMAT JAVASCRIPT 
+```
+const isoDate = "2024-10-30T12:30:44.000000Z";
+const date = new Date(isoDate);
+
+const options = {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: false, // 24-часовой формат
+  timeZone: 'UTC'
+};
+
+const formattedDate = new Intl.DateTimeFormat('ru-RU', options).format(date);
+console.log(formattedDate); 
+// Результат: 30.10.2024, 12:30:44
+
+```
+
+# LARAVEL CORS CONFIG
+```
+php artisan config:publish cors
+
+return [
+       'paths' => ['*'],
+       'allowed_methods' => ['GET', 'POST', 'PUT', 'OPTIONS'],
+       'allowed_origins' => ['https://localhost82'],
+       'allowed_origins_patterns' => [],
+       'allowed_headers' => ['Origin', 'Content-Type', 'X-Auth-Token', 'Cookie'],
+       'exposed_headers' => [],
+       'max_age' => 0,
+       'supports_credentials' => true,
+];
+
+php artisan config:clear
+php artisan route:clear
+php artisan cache:clear
+
+```
