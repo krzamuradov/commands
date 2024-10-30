@@ -284,6 +284,30 @@ use Illuminate\Validation\ValidationException;
 
 ```
 
+# PRETTIER CONFIG
+```
+// CREATE .prettierrc 
+
+{
+    "semi": true,
+    "singleQuote": true,
+    "tabWidth": 4,
+    "useTabs": false,
+    "trailingComma": "es5",
+    "bracketSpacing": true,
+    "arrowParens": "always",
+    "printWidth": 170,
+    "vueIndentScriptAndStyle": true
+}
+
+CREATE .prettierignore
+node_modules/
+dist/
+public/
+
+
+```
+
 # COMPOSER PLUGIN FOR INTERFACE SERVICE 
 ```
 composer require theanik/laravel-more-command --dev
