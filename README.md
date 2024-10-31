@@ -355,3 +355,21 @@ php artisan route:clear
 php artisan cache:clear
 
 ```
+
+# FILE UPLOAD SIZE
+## NGINX
+```
+client_max_body_size 20M;
+```
+## PHP
+```
+///etc/php/8.2/fpm/php.ini
+post_max_size = 20M
+upload_max_filesize = 20M
+```
+```
+#bash
+sudo systemctl restart php8.2-fpm
+sudo systemctl reload nginx
+```
+
