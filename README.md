@@ -274,13 +274,18 @@ use Illuminate\Validation\ValidationException;
 
 {
     "compilerOptions": {
-        "baseUrl": "./",
-        "paths": {
-            "@/*": ["resources/js/*"]
-        }
+      "baseUrl": "./",
+      "paths": {
+        "@/*": ["resources/js/*"]
+      },
+      "module": "ESNext",
+      "target": "ES6",
+      "moduleResolution": "Node"
     },
-    "exclude": ["node_modules", "public"]
-}
+    "exclude": ["node_modules", "public"],
+    "include": ["resources/js/**/*"]
+  }
+
 
 ```
 
