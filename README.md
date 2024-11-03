@@ -286,6 +286,10 @@ use Illuminate\Validation\ValidationException;
     "include": ["resources/js/**/*"]
   }
 
+CTRL+, 
+"javascript.preferences.importModuleSpecifier": "non-relative",
+"typescript.preferences.importModuleSpecifier": "non-relative"
+
 
 ```
 
