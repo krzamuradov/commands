@@ -381,4 +381,26 @@ upload_max_filesize = 20M
 sudo systemctl restart php8.2-fpm
 sudo systemctl reload nginx
 ```
+## INERTIA SETTINGS
+```
+composer require inertiajs/inertia-laravel
+php artisan inertia:middleware
+npm install vue @vitejs/plugin-vue @inertiajs/vue3
+
+import { createApp, h } from 'vue';
+import { createInertiaApp } from '@inertiajs/vue3';
+import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import "bootstrap/dist/css/bootstrap.min.css"
+import "bootstrap/dist/js/bootstrap.bundle.min.js"
+
+createInertiaApp({
+    resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
+    setup({ el, App, props, plugin }) {
+        createApp({ render: () => h(App, props) })
+            .use(plugin)
+            .mount(el);
+    },
+});
+
+```
 
