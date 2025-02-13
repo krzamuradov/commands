@@ -414,6 +414,7 @@ cd /d "%~dp0"
 start /b php artisan serve
 start /b npm run dev
 start /b code .
+start "" "http://127.0.0.1:8000"
 
 ```
 
