@@ -404,3 +404,15 @@ createInertiaApp({
 
 ```
 
+## RUN_DEV_SERVER
+```
+CREATE RUN_DEV_SERVER.bat
+
+@echo off
+cd /d "%~dp0"
+
+start /b php artisan serve
+start /b npm run dev
+
+```
+
