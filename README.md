@@ -413,6 +413,7 @@ cd /d "%~dp0"
 
 start /b php artisan serve
 start /b npm run dev
+start /b code .
 
 ```
 
