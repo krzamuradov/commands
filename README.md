@@ -271,7 +271,7 @@ use Illuminate\Validation\ValidationException;
 # VSCODE SETTINGS JS IN LARAVEL PROJECT 
 ```
 // CREATE jsconfig.json
-
+//FOR LARAVEL
 {
     "compilerOptions": {
       "baseUrl": "./",
@@ -284,6 +284,20 @@ use Illuminate\Validation\ValidationException;
     },
     "exclude": ["node_modules", "public"],
     "include": ["resources/js/**/*"]
+  }
+//FOR VUE ONLY
+{
+    "compilerOptions": {
+      "baseUrl": "./",
+      "paths": {
+        "@/*": ["src/*"]
+      },
+      "module": "ESNext",
+      "target": "ES6",
+      "moduleResolution": "Node"
+    },
+    "exclude": ["node_modules", "public"],
+    "include": ["src/**/*"]
   }
 
 CTRL+, 
@@ -299,7 +313,7 @@ CTRL+,
 
 {
     "semi": true,
-    "singleQuote": true,
+    "singleQuote": false,
     "tabWidth": 4,
     "useTabs": false,
     "trailingComma": "es5",
