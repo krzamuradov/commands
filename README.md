@@ -1,4 +1,8 @@
-
+# LXC commands
+```
+// Создание контейнера UBUNTU
+lxc launch ubuntu:22.04 ubuntu
+```
 # BASE DEPENDENCIES
 ```
 apt install mc curl git zip unzip openssh-server -y
