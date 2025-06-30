@@ -135,11 +135,31 @@ apt install phpmyadmin
 ln -s /usr/share/phpmyadmin /var/www/
 ```    
 
-# NPM
+# Полезные пакеты NPM
 ```
-apt install npm -y
-npm install
-npm install vue @vitejs/plugin-vue bootstrap vuex vue-router @fortawesome/fontawesome-free
+@vitejs/plugin-vue
+vue
+axios
+
+bootstrap
+import ""bootstrap/dist/css/bootstrap.min.css;
+import ""bootstrap/dist/js/bootstrap.bundle.min.js;
+
+vuex
+vue-router
+@fortawesome/fontawesome-free
+
+bootstrap-icons
+import "bootstrap-icons/font/bootstrap-icons.css";
+
+docx-preview
+vue-i18n
+pdf-vue3
+
+dayjs
+import dayjs from 'dayjs';
+dayjs(meeting.meeting_at).format('DD.MM.YYYY')
+
 ```
 # NPM publish package
 ```
@@ -435,4 +455,129 @@ start /b code .
 start "" "http://127.0.0.1:8000"
 
 ```
+
+## Проверка доступа на JS
+```
+export const permissions = {
+    1: ["list-meetings", "show-meeting", "create-meeting", "edit-meeting", "delete-meeting", "users-list", "users-create"],
+    2: ["list-meetings", "show-meeting", "create-meeting", "edit-meeting", "delete-meeting", "users-list", "users-create"],
+    3: ["list-meetings", "show-meeting", "list-documents", "show-document"],
+};
+
+export function can(ability) {
+    try {
+        const userRaw = localStorage.getItem("user");
+        if (!userRaw) return false;
+
+        const user = JSON.parse(userRaw);
+        const userAbilities = permissions[user.role_id] || [];
+
+        return userAbilities.includes(ability);
+    } catch (e) {
+        console.error("Ошибка в can():", e);
+        return false;
+    }
+}
+```
+
+## Компонент DOCX-VIEWER
+```
+<script setup>
+    import { ref, onMounted } from "vue";
+    import { renderAsync } from "docx-preview";
+    import { useRoute, useRouter } from "vue-router";
+
+    const route = useRoute();
+    const router = useRouter();
+    console.log(route);
+
+    const url = route.query.url;
+
+    const container = ref(null);
+    const styleContainer = ref(null);
+
+    async function loadAndRenderDocx() {
+        if (!container.value || !(container.value instanceof HTMLElement)) {
+            console.error("container.value не HTMLElement");
+            return;
+        }
+        if (!styleContainer.value || !(styleContainer.value instanceof HTMLElement)) {
+            console.error("styleContainer.value не HTMLElement");
+            return;
+        }
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`Ошибка загрузки: ${response.statusText}`);
+
+            const arrayBuffer = await response.arrayBuffer();
+
+            container.value.textContent = "";
+
+            await renderAsync(arrayBuffer, container.value, styleContainer.value, {
+                className: "docx-preview",
+                inWrapper: false,
+                experimental: true,
+                ignoreWidth: true,
+                ignoreHeight: true,
+                renderChanges: true,
+                renderAltChunks: true,
+            });
+        } catch (e) {
+            console.error("Ошибка при рендеринге DOCX:", e);
+        }
+    }
+
+    onMounted(() => {
+        loadAndRenderDocx();
+    });
+</script>
+
+<template>
+    <button @click="router.back()" class="btn btn-outline-secondary mb-3"><i class="fa fa-reply"></i> Hujjatlar ro'yxatiga qaytish</button>
+    <div class="d-flex justify-content-center align-items-center">
+        <div ref="styleContainer" style="width: 0; height: 0; overflow: hidden; position: absolute; left: -9999px"></div>
+
+        <div ref="container"></div>
+    </div>
+</template>
+
+<style scoped>
+    .docx-container .docx-preview {
+        background-color: none !important;
+        font-family: Arial, sans-serif;
+        line-height: 1.5;
+    }
+    .docx-container [style*="background"] {
+        background-color: white !important;
+    }
+</style>
+
+```
+
+## Компонент pdf-vue3
+```
+<script setup>
+    import PDF from "pdf-vue3";
+    import { useRoute, useRouter } from "vue-router";
+
+    const route = useRoute();
+    const router = useRouter();
+    const url = route.query.url;
+    console.log(url);
+
+    const props = defineProps({
+        url: { type: String },
+    });
+</script>
+
+<template>
+    <div class="container mt-4">
+        <button @click="router.back()" class="btn btn-outline-secondary mb-3"><i class="fa fa-reply"></i> Hujjatlar ro'yxatiga qaytish</button>
+        <PDF :src="url" pdfWidth="70%" scrollThreshold="10" />
+    </div>
+</template>
+
+```
+
 
