@@ -106,7 +106,8 @@ server {
 
 # PHP
 ```
-apt install php php-cli php-fpm php-json php-common php-mysql php-zip php-gd php-mbstring php-curl php-xml php-pear php-bcmath -y
+sudo apt install php php-cli php-fpm php-json php-common php-mysql php-zip php-gd php-mbstring php-curl php-xml php-pear php-bcmath php-tokenizer php-readline php-soap php-intl php-dom php-fileinfo php-opcache php-pgsql php-sqlite3 php-imap -y
+
 ```
 # COMPOSER
 ```
