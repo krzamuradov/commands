@@ -787,4 +787,8 @@ const router = createRouter({
     history: createWebHistory("/appname/"),
     routes,
 });
+.env
+APP_URL=https://domain.com/appname
+ASSET_URL=https://domain.com/appname
+VITE_API_URL=https://domain.com/appname/api
 ```
