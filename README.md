@@ -724,3 +724,67 @@ export function can(ability) {
 
 
 ```
+
+## Настройка SPA приложения в подкаталоге.
+```
+//vite.config.js
+import { defineConfig } from "vite";
+import vue from "@vitejs/plugin-vue";
+import laravel from "laravel-vite-plugin";
+
+export default defineConfig({
+    base: "/appname/build/",
+    plugins: [
+        laravel({
+            input: ["resources/css/app.css", "resources/js/app.js"],
+            refresh: true,
+            buildDirectory: "build",
+            manifest: true,
+        }),
+        vue(),
+    ],
+});
+
+//nginx in container
+server {
+    listen 80;
+    server_name localhost;
+
+    root /srv/appname/public;
+    index index.php index.html;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        include fastcgi_params;
+        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|otf)$ {
+        expires 7d;
+        access_log off;
+        add_header Cache-Control "public";
+    }
+}
+
+nginx in host
+    location /sms/ {
+        proxy_pass http://container-ip/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+//router.js
+const router = createRouter({
+    history: createWebHistory("/appname/"),
+    routes,
+});
+```
