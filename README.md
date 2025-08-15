@@ -1,3 +1,116 @@
+# Laravel settings API-only
+```
+// Создаём проект
+composer create-project laravel/laravel ./ ^11
+// Устанавливаем API
+php artisan install:api
+// Создаём middleware для JSON ответов.
+php artisan make:middleware ForceJson
+// Настройка CORS
+php artisan config:publish cors
+// bootstrap/app.php
+<?php
+
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Illuminate\Auth\AuthenticationException;
+
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        // Web-маршруты отключаем — никакого HTML
+        web: null,
+
+        // Только API-маршруты
+        api: __DIR__ . '/../routes/api.php',
+
+        // Консольные команды
+        commands: __DIR__ . '/../routes/console.php',
+
+        // Health-check (опционально)
+        health: '/up',
+    )
+    ->withMiddleware(function (Middleware $middleware) {
+        // Подключаем API middleware
+        $middleware->api(prepend: [
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+        ]);
+
+        // Убираем лишнее из web стека
+        $middleware->web(remove: [
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        ]);
+        $middleware->append(\Illuminate\Http\Middleware\HandleCors::class);
+
+        $middleware->append(\App\Http\Middleware\ForceJson::class);
+
+        // alias — если хотите использовать как именованный middleware
+        $middleware->alias([
+            'force.json' => \App\Http\Middleware\ForceJson::class,
+        ]);
+    })
+    ->withExceptions(function (Exceptions $exceptions) {
+        // Ошибки валидации
+        $exceptions->render(function (ValidationException $e) {
+            return new JsonResponse([
+                'message' => 'Validation failed',
+                'errors'  => $e->errors(),
+            ], 422);
+        });
+
+        // Неавторизован
+        $exceptions->render(function (AuthenticationException $e) {
+            return new JsonResponse([
+                'message' => 'Unauthenticated',
+            ], 401);
+        });
+
+        // Доступ запрещён
+        $exceptions->render(function (AccessDeniedHttpException $e) {
+            return new JsonResponse([
+                'message' => 'Forbidden',
+            ], 403);
+        });
+
+        // Не найдено
+        $exceptions->render(function (NotFoundHttpException $e) {
+            return new JsonResponse([
+                'message' => 'Api Not Found',
+            ], 404);
+        });
+
+        // Любая другая HTTP ошибка
+        $exceptions->render(function (HttpException $e) {
+            return new JsonResponse([
+                'message' => $e->getMessage() ?: 'HTTP Error',
+            ], $e->getStatusCode());
+        });
+
+        // Все остальные ошибки (в т.ч. 500)
+        $exceptions->render(function (Throwable $e) {
+            return new JsonResponse([
+                'message' => config('app.debug')
+                    ? $e->getMessage()
+                    : 'Server Error',
+                'trace' => config('app.debug')
+                    ? $e->getTrace()
+                    : [],
+            ], 500);
+        });
+    })
+    ->create();
+//Можно удалить
+/routes/web.php
+/resources/*
+tailwindcss
+vite.config.js
+package.json
+```
 # LXC commands
 ```
 // Создание контейнера UBUNTU
