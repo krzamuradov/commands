@@ -955,3 +955,46 @@ APP_URL=https://domain.com/appname
 ASSET_URL=https://domain.com/appname
 VITE_API_URL=https://domain.com/appname/api
 ```
+
+## LARAVEL WORKER SETTINGS
+```
+//-----------INSTALL SUPERVISOR
+sudo apt update && sudo apt install supervisor -y
+systemctl status supervisor
+sudo nano /etc/supervisor/conf.d/laravel-worker.conf
+
+//------------CONFIG
+[program:laravel-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php /var/www/your-app/artisan queue:work --sleep=3 --tries=3 --timeout=90
+autostart=true
+autorestart=true
+user=www-data
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/var/www/your-app/storage/logs/worker.log
+stopwaitsecs=3600
+//----------PARAMS
+--sleep=3 → если нет задач, ждёт 3 секунды.
+
+--tries=3 → если задача упала, Laravel попробует 3 раза.
+
+--timeout=90 → если job выполняется дольше 90 сек → прервётся.
+
+numprocs=1 → один процесс (можно увеличить для высокой нагрузки).
+
+//----------START SERVICE
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl start laravel-worker:*
+sudo supervisorctl status
+
+//---------- STOP AND DELETE SERVICE
+
+sudo supervisorctl stop laravel-worker:*
+sudo rm /etc/supervisor/conf.d/laravel-worker.conf
+sudo supervisorctl reread
+sudo supervisorctl update
+
+sudo systemctl stop supervisor 
+```
