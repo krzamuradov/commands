@@ -998,3 +998,43 @@ sudo supervisorctl update
 
 sudo systemctl stop supervisor 
 ```
+
+## REDIS SETTINGS
+
+```
+sudo apt update
+sudo apt install redis-server -y
+sudo systemctl status redis-server
+sudo systemctl start redis-server
+sudo systemctl enable redis-server
+
+sudo mcedit /etc/redis/redis.conf
+bind 0.0.0.0
+requirepass q1w2e3
+supervised systemd
+sudo systemctl restart redis-server
+//----------- Проверка
+redis-cli
+127.0.0.1:6379> ping
+127.0.0.1:6379> auth q1w2e3
+OK
+127.0.0.1:6379> ping
+PONG
+
+composer require predis/predis
+
+//---------- .env
+CACHE_DRIVER=redis
+SESSION_DRIVER=redis
+QUEUE_CONNECTION=redis
+
+REDIS_CLIENT=predis
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+
+php artisan cache:clear
+php artisan config:clear
+php artisan queue:failed
+
+```
