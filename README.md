@@ -266,6 +266,9 @@ vue-router
 bootstrap-icons
 import "bootstrap-icons/font/bootstrap-icons.css";
 
+flag-icons
+import "flag-icons/css/flag-icons.min.css";
+
 docx-preview
 vue-i18n
 pdf-vue3
@@ -273,6 +276,7 @@ pdf-vue3
 dayjs
 import dayjs from 'dayjs';
 dayjs(meeting.meeting_at).format('DD.MM.YYYY')
+
 
 ```
 # NPM publish package
