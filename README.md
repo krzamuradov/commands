@@ -441,14 +441,42 @@ use Illuminate\Validation\ValidationException;
     "exclude": ["node_modules", "public"],
     "include": ["src/**/*"]
   }
+```
+# VSCODE CONFIG
+```
+Ctrl + Shift + P → Preferences: Open Settings (JSON)
 
-CTRL+, 
-"javascript.preferences.importModuleSpecifier": "non-relative",
-"typescript.preferences.importModuleSpecifier": "non-relative"
+{
+    // PHP — форматирует Intelephense
+    "[php]": {
+        "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+    },
+
+    // Vue — форматирует Prettier
+    "[vue]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+
+    // JavaScript — тоже Prettier
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+
+    // TypeScript (вдруг понадобится)
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+
+    // Общие настройки
+    "editor.formatOnSave": true,
+
+    "javascript.preferences.importModuleSpecifier": "non-relative",
+    "typescript.preferences.importModuleSpecifier": "non-relative"
+}
+
 
 
 ```
-
 # PRETTIER CONFIG
 ```
 // CREATE .prettierrc 
