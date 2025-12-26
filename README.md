@@ -1070,3 +1070,16 @@ php artisan config:clear
 php artisan queue:failed
 
 ```
+## PORT FORWARD
+
+```
+POWERSHELL
+-------ADD FORWARD
+netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport={PORT} connectaddress={ADDRESS_IN_WSL} connectport={PORT_IN_WSL}
+-------SHOW FORWARDS
+netsh interface portproxy show all
+-------DELETE FORWARDS
+netsh interface portproxy delete v4tov4 listenport=8000 listenaddress=0.0.0.0
+
+```
+
