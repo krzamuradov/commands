@@ -1083,3 +1083,29 @@ netsh interface portproxy delete v4tov4 listenport=8000 listenaddress=0.0.0.0
 
 ```
 
+## ANDROID APP WITH VUE
+
+```
+# 1. Создание Vue 3 (Vite)
+npm create vue@latest android-app
+cd android-app
+npm install
+npm run dev
+# 3. Установка Capacitor
+npm install @capacitor/core @capacitor/cli
+npx cap init
+# 4. Production build
+npm run build
+# 5. Добавление Android платформы
+npx cap add android
+# 6. Синхронизация
+npx cap sync android
+# 6. Синхронизация
+npx cap sync android
+# 8. (После изменений во Vue)
+npm run build
+npx cap sync android
+# 9. Сборка APK (через Android Studio → Build)
+# Build > Generate Signed App Bundle or APK
+```
+
