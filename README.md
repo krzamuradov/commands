@@ -1096,6 +1096,7 @@ npm install @capacitor/core @capacitor/cli
 npx cap init
 # 4. Production build
 npm run build
+npm install @capacitor/android
 # 5. Добавление Android платформы
 npx cap add android
 # 6. Синхронизация
@@ -1107,5 +1108,8 @@ npm run build
 npx cap sync android
 # 9. Сборка APK (через Android Studio → Build)
 # Build > Generate Signed App Bundle or APK
+# Console build
+cd android
+./gradlew assembleDebug
 ```
 
