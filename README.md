@@ -6,6 +6,21 @@ composer create-project laravel/laravel ./ ^11
 php artisan install:api
 // Создаём middleware для JSON ответов.
 php artisan make:middleware ForceJson
+class ForceJson
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next)
+    {
+        $request->headers->set('Accept', 'application/json');
+        $response = $next($request);
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+}
 // Настройка CORS
 php artisan config:publish cors
 // bootstrap/app.php
