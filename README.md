@@ -849,3 +849,14 @@ const routes = [
 ]
 ```
 
+## TELEGRAM WEBHOOK SETTINGS
+
+```
+-------SET WEBHOOK
+https://api.telegram.org/bot<BOT_TOKEN>/setwebhook?url=<URL>
+-------DELETE WEBHOOK
+https://api.telegram.org/bot<BOT_TOKEN>/deleteWebhook?drop_pending_updates=true
+-------GETINFO WEBHOOK
+https://api.telegram.org/bot<BOT_TOKEN>/getWebhookinfo
+```
+
