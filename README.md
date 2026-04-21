@@ -839,6 +839,7 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk
 ## IF NO HINTS IN routes.js
 
 ```
+/** @var \App\Models\User $user **/
 /** @type {import('vue-router').RouteRecordRaw[]} */
 const routes = [
   {
