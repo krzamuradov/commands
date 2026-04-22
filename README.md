@@ -500,7 +500,8 @@ use Illuminate\Validation\ValidationException;
     }
 ```
 
-# VSCODE SETTINGS JS IN LARAVEL PROJECT
+# НАСТРОЙКИ VSCODE
+#### АВТОЗАГРУЗКА ФАЙЛОВ И КОМПОНЕНТОВ
 > [!NOTE]
 > СОЗДАЁМ В КОРНЕ ФАЙЛ jsconfig.json
 
@@ -570,7 +571,7 @@ Ctrl + Shift + P → Preferences: Open Settings (JSON)
 }
 
 ```
-# PRETTIER CONFIG
+# НАСТРОЙКА PRETTIER
 > [!NOTE]
 > СОЗДАЁМ В КОРНЕ ФАЙЛ .prettierrc
 ```
@@ -603,7 +604,7 @@ public/
 composer require theanik/laravel-more-command --dev
 ```
 
-# DATE FORMAT JAVASCRIPT 
+# ФОРМАТИРОВАНИЕ ДАТЫ НА ЧИСТОМ JAVASCRIPT 
 ```
 const isoDate = "2024-10-30T12:30:44.000000Z";
 const date = new Date(isoDate);
@@ -626,17 +627,22 @@ console.log(formattedDate);
 ```
 
 
-## INERTIA SETTINGS
+# НАСТРОЙКИ INERTIA.JS
+#### УСТАНОВКА
 ```
 composer require inertiajs/inertia-laravel
+```
+```
 php artisan inertia:middleware
+```
+```
 npm install vue @vitejs/plugin-vue @inertiajs/vue3
-
+```
+#### ПОДКЛЮЧЕНИЕ
+```
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import "bootstrap/dist/css/bootstrap.min.css"
-import "bootstrap/dist/js/bootstrap.bundle.min.js"
 
 createInertiaApp({
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
@@ -646,24 +652,9 @@ createInertiaApp({
             .mount(el);
     },
 });
-
 ```
 
-## RUN_DEV_SERVER
-```
-CREATE RUN_DEV_SERVER.bat
-
-@echo off
-cd /d "%~dp0"
-
-start /b php artisan serve
-start /b npm run dev
-start /b code .
-start "" "http://127.0.0.1:8000"
-
-```
-
-## Проверка доступа на JS
+## ПРИМЕР ПРОВЕРКИ ДОСТУПА НА JAVASCRIPT
 ```
 export const permissions = {
     1: ["list-meetings", "show-meeting", "create-meeting", "edit-meeting", "delete-meeting", "users-list", "users-create"],
@@ -687,15 +678,16 @@ export function can(ability) {
 }
 ```
 
-## Настройка SPA приложения в подкаталоге.
+# НАСТРОЙКА SPA ПРИЛОЖЕНИЯ ЕСЛИ ДОМЕН ОДИН А ПРИЛОЖЕНИИ НЕСКОЛЬКО
+> [!NOTE]
+> ФАЙЛ vite.config.js
 ```
-//vite.config.js
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import laravel from "laravel-vite-plugin";
 
 export default defineConfig({
-    base: "/appname/build/",
+    base: "/<APP_NAME>/build/",
     plugins: [
         laravel({
             input: ["resources/css/app.css", "resources/js/app.js"],
@@ -706,53 +698,34 @@ export default defineConfig({
         vue(),
     ],
 });
-
-//nginx in container
-server {
-    listen 80;
-    server_name localhost;
-
-    root /srv/appname/public;
-    index index.php index.html;
-
-    location / {
-        try_files $uri $uri/ /index.php?$query_string;
-    }
-
-    location ~ \.php$ {
-        include fastcgi_params;
-        fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
-        fastcgi_index index.php;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-    }
-
-    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|otf)$ {
-        expires 7d;
-        access_log off;
-        add_header Cache-Control "public";
-    }
-}
-
-nginx in host
-    location /sms/ {
-        proxy_pass http://container-ip/;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-    }
-//router.js
+```
+> [!NOTE]
+> ФАЙЛ router.js
+```
 const router = createRouter({
-    history: createWebHistory("/appname/"),
+    history: createWebHistory("/<APP_NAME>/"),
     routes,
 });
-.env
-APP_URL=https://domain.com/appname
-ASSET_URL=https://domain.com/appname
-VITE_API_URL=https://domain.com/appname/api
+```
+> [!NOTE]
+> ФАЙЛ .env
+```
+APP_URL=https://<DOMAIN>/<APP_NAME>
+ASSET_URL=https://<DOMAIN>/<APP_NAME>
+VITE_API_URL=https://<DOMAIN>/<APP_NAME>/api
+```
+#### НАСТРОЙКА NGINX
+```
+location /sms/ {
+	proxy_pass http://<CONTAINER_IP>/; // ЕСЛИ LXC
+	proxy_set_header Host $host;
+	proxy_set_header X-Real-IP $remote_addr;
+	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	proxy_set_header X-Forwarded-Proto $scheme;
+	proxy_http_version 1.1;
+	proxy_set_header Upgrade $http_upgrade;
+	proxy_set_header Connection "upgrade";
+}
 ```
 
 ## LARAVEL WORKER SETTINGS
@@ -798,47 +771,72 @@ sudo supervisorctl update
 sudo systemctl stop supervisor 
 ```
 
-## REDIS SETTINGS
+## УСТАНОВКА И НАСТРОЙКА REDIS
 
 ```
 sudo apt update
+```
+```
 sudo apt install redis-server -y
+```
+```
 sudo systemctl status redis-server
+```
+```
 sudo systemctl start redis-server
+```
+```
 sudo systemctl enable redis-server
-
-sudo mcedit /etc/redis/redis.conf
+```
+#### НАСТРОЙКА НА СЕРВЕРЕ
+> [!NOTE]
+> ФАЙЛ /etc/redis/redis.conf
+```
 bind 0.0.0.0
-requirepass q1w2e3
+requirepass <PASSWORD>
 supervised systemd
 sudo systemctl restart redis-server
-//----------- Проверка
+
+```
+#### ПРОВЕРКА
+```
 redis-cli
 127.0.0.1:6379> ping
 127.0.0.1:6379> auth q1w2e3
 OK
 127.0.0.1:6379> ping
 PONG
-
+```
+#### НАСТРОЙКА LARAVEL
+```
 composer require predis/predis
-
-//---------- .env
+```
+> [!NOTE]
+> ФАЙЛ .env
+```
 CACHE_DRIVER=redis
 SESSION_DRIVER=redis
 QUEUE_CONNECTION=redis
 
 REDIS_CLIENT=predis
 REDIS_HOST=127.0.0.1
-REDIS_PASSWORD=null
+REDIS_PASSWORD=<PASSWORD>
 REDIS_PORT=6379
-
-php artisan cache:clear
-php artisan config:clear
-php artisan queue:failed
-
 ```
-## PORT FORWARD FOR WSL
-### POWERSHELL
+```
+php artisan cache:clear
+```
+```
+php artisan config:clear
+```
+```
+php artisan queue:failed
+```
+
+## НАСТРОЙКА PORT FORWARD С HOST В WSL
+> [!NOTE]
+> ДЕЙСТВИЯ ДОЛЖНЫ ВЫПОЛНЯТЬСЯ В POWERSHELL
+
 #### ADD FORWARD
 ```
 netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=<PORT> connectaddress=<ADDRESS_IN_WSL> connectport=<PORT_IN_WSL>
@@ -852,25 +850,38 @@ netsh interface portproxy show all
 netsh interface portproxy delete v4tov4 listenport=<LISTEN_PORT> listenaddress=0.0.0.0
 ```
 
-## ANDROID APP WITH VUE
-
+# ANDROID ПРИЛОЖЕНИЕ С VUE.JS
+##### СОЗДАНИЕ VUE ПРИЛОЖЕНИЯ
 ```
-# 1. Создание Vue 3 (Vite)
-npm create vue@latest android-app
-cd android-app
+npm create vue@latest <APP_FOLDER>
+```
+```
+cd /<APP_FOLDER>
+```
+```
 npm install
-npm run dev
-# 3. Установка Capacitor
+```
+#### УСТАНОВКА Capacitor(СБОРЩИК ANDRPID APK)
+```
 npm install @capacitor/core @capacitor/cli
+```
+```
 npx cap init
-# 4. Production build
-npm run build
-npm install @capacitor/android
-# 5. Добавление Android платформы
+```
+##### ДОБАВЛЕНИЕ ПЛАТФОРМЫ ANDROID
+```
 npx cap add android
-# 6. Синхронизация
-npx cap sync android
-# 6. Синхронизация
+```
+#### СБОРКА ПРИЛОЖЕНИЯ ПОСЛЕ РАЗРАБОТКИ
+```
+npm run build
+```
+```
+npm install @capacitor/android
+```
+
+##### СИНХРОНИЗАЦИЯ
+```
 npx cap sync android
 # 8. (После изменений во Vue)
 npm run build
@@ -884,7 +895,7 @@ cd android
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
-## IF NO HINTS IN routes.js
+## ЕСЛИ НЕТ ПОДСКАЗКИ В ОТДЕЛЬНОМ ФАЙЛЕ routes.js
 
 ```
 /** @var \App\Models\User $user **/
@@ -898,7 +909,7 @@ const routes = [
 ]
 ```
 
-## TELEGRAM WEBHOOK SETTINGS
+## НАСТРОЙКИ TELEGRAM WEBHOOK
 #### SET WEBHOOK
 ```
 https://api.telegram.org/bot<BOT_TOKEN>/setwebhook?url=<URL>
