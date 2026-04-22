@@ -143,34 +143,34 @@ lxc launch ubuntu:22.04 ubuntu
 apt install mc curl git zip unzip openssh-server -y
 ```
 
-# NGINX
+# УСТАНОВКА И НАСТРОЙКА NGINX
+#### УСТАНОВКА
 ```
 apt install nginx -y
 ```
-### NGINX CONF FOR BACKEND AND FRONTEND
+#### КОНФИГ NGINX ЕСЛИ ПРОЕКТ НЕ МОНОЛИТ BACKEND И FRONTEND 80 ПОРТ
 ```
 server {
     listen 80;
-    server_name //IP OR DOMAIN NAME;
-
-    root /srv/PROJECT_NAME/frontend/dist;
+    server_name <IP_OR_DOMAIN_NAME>;
+	#FRONTEND
+    root /<FRONTEND_FOLDER>/dist;
     index index.html;
 
     location / {
         try_files $uri $uri/ /index.html;
     }
 
-
     location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|ttf|woff|woff2|eot)$ {
-        root /srv/PROJECT_NAME/frontend/dist;
+        root /<FRONTEND_FOLDER>/dist;
         expires 30d;
         add_header Cache-Control "public";
     }
 
+	# BACKEND
     location /api/ {
-        root /srv/PROJECT_NAME/backend/public;
+        root /<BACKEND_FOLDER>/public;
         try_files $uri $uri/ /index.php?$query_string;
-
         fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
         fastcgi_index index.php;
         include fastcgi_params;
@@ -179,7 +179,7 @@ server {
     }
 
     location ~ \.php$ {
-        root /srv/PROJECT_NAME/backend/public;
+        root /<BACKEND_FOLDER>/public;
         fastcgi_pass unix:/var/run/php/php8.2-fpm.sock;
         fastcgi_index index.php;
         include fastcgi_params;
