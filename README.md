@@ -138,11 +138,55 @@ return Application::configure(basePath: dirname(__DIR__))
 // Создание контейнера UBUNTU
 lxc launch ubuntu:22.04 ubuntu
 ```
-# BASE DEPENDENCIES
+# НАСТРОЙКА ЧИСТОГО СЕРВЕРА
+### БАЗОВЫЕ УСТАНОВКИ
 ```
 apt install mc curl git zip unzip openssh-server -y
 ```
-
+### УСТАНОВКА PHP
+```
+sudo apt install php php-cli php-fpm php-json php-common php-mysql php-zip php-gd php-mbstring php-curl php-xml php-pear php-bcmath php-tokenizer php-readline php-soap php-intl php-dom php-fileinfo php-opcache php-pgsql php-sqlite3 php-imap -y
+```
+### УСТАНОВКА COMPOSER
+##### СКАЧИВАНИЕ COMPOSER
+```
+curl -s https://getcomposer.org/installer | php
+```
+##### ПЕРЕМЕЩЕНИЕ COMPOSER
+```
+mv composer.phar /usr/local/bin/composer
+```
+# УСТАНОВКА И НАСТРОЙКА MARIADB
+##### УСТАНОВКА
+```
+apt install mariadb-server -y
+```
+##### НАСТРОЙКА
+```
+systemctl stop mariadb
+```
+```
+systemctl set-environment MYSQLD_OPTS="--skip-grant-tables --skip-networking"
+```
+```
+systemctl start mariadb
+```
+```
+systemctl status mariadb
+```
+```
+mysql -u root
+```
+```
+FLUSH PRIVILEGES;
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'password';
+```
+```
+systemctl unset-environment MYSQLD_OPTS
+```
+```
+systemctl restart mariadb
+```
 # УСТАНОВКА И НАСТРОЙКА NGINX
 #### УСТАНОВКА
 ```
@@ -191,7 +235,7 @@ server {
     error_log /var/log/nginx/vue_error.log;
 }
 ```
-### NGINX FOR DEFAULT SERVER
+#### НАСТРОЙКА NGINX ЕСЛИ НЕ СОВПАЛ ДОМЕН ИЛИ ЗАХОДЯТ ПО IP
 ```
 server {
     listen 80 default_server;
@@ -201,14 +245,14 @@ server {
     #return 403;
 }
 ```
-### NGINX PROXY CONF
+#### НАСТРОЙКА NGINX PROXY
 ```
 server {
     listen 80;
-    server_name //IP OR DOMAIN;
+    server_name <IP_OR_DOMAIN_NAME>;
 
     location / {
-        proxy_pass http://0.0.0.0;
+        proxy_pass http://<IP_ADRESS>;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -216,38 +260,37 @@ server {
     }
 }
 ```
-### NGINX CONF FOR ONLY PHP PROJECT
+#### NGINX CONF FOR ONLY PHP PROJECT
 ```
 server {
     listen 80;
-    index index.php
-    server_name localhost;
-    index index.php;
-    root /var/www/html/public;
+    server_name <IP_OR_DOMAIN_NAME>;
 
-    location ~ \.php$ {
-	try_files $uri =404;
-        include fastcgi_params;
-	fastcgi_index index.php;
-        fastcgi_pass unix:/run/php/php8.2-fpm.sock;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+	root /<BACKEND_FOLDER>/public;
+    index index.php;
+
+    charset utf-8;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
     }
 
-	location / {
-		try_files $uri $uri/ /index.php$is_args$args;
-    	}
+    location ~ \.php$ {
+        try_files $uri =404;
+
+        include fastcgi_params;
+        fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        fastcgi_param DOCUMENT_ROOT $realpath_root;
+
+        fastcgi_index index.php;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
 }
-```
-
-# PHP
-```
-sudo apt install php php-cli php-fpm php-json php-common php-mysql php-zip php-gd php-mbstring php-curl php-xml php-pear php-bcmath php-tokenizer php-readline php-soap php-intl php-dom php-fileinfo php-opcache php-pgsql php-sqlite3 php-imap -y
-
-```
-# COMPOSER
-```
-curl -s https://getcomposer.org/installer | php
-mv composer.phar /usr/local/bin/composer
 ```
 
 # MARIADB
