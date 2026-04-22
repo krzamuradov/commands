@@ -371,33 +371,34 @@ sudo systemctl restart php8.2-fpm
 sudo systemctl reload nginx
 ```
 
-# Полезные пакеты NPM
+# ПОЛЕЗНЫЕ ПАКЕТЫ NPM
+#### УСТАНОВКА БАЗОВЫХ ПАКЕТОВ ОДНОЙ КОМАНДОЙ В МОНОЛИТНОМ ПРОЕКТЕ
 ```
-@vitejs/plugin-vue
-vue
-axios
+npm install vue @vitejs/plugin-vue vue-router pinia bootstrap bootstrap-icons vue-i18n dayjs
+```
+> [!NOTE]
+> ТАКЖЕ ЕСТЬ
+> @fortawesome/fontawesome-free
+> flag-icons
+> docx-preview
+> pdf-vue3
 
-bootstrap
+###### ПРИМЕРЫ ПОДКЛЮЧЕНИЯ
+
+```
+#-----BOOTSTRAP
 import ""bootstrap/dist/css/bootstrap.min.css;
 import ""bootstrap/dist/js/bootstrap.bundle.min.js;
 
-vuex
-vue-router
-@fortawesome/fontawesome-free
-
-bootstrap-icons
+#-----BOOTSTRAP-ICONS
 import "bootstrap-icons/font/bootstrap-icons.css";
 
-flag-icons
+#-----FLAG-ICONS
 import "flag-icons/css/flag-icons.min.css";
 
-docx-preview
-vue-i18n
-pdf-vue3
-
-dayjs
+#-----DAYJS
 import dayjs from 'dayjs';
-dayjs(meeting.meeting_at).format('DD.MM.YYYY')
+dayjs(<ISO_DATE>).format('DD.MM.YYYY')
 
 ```
 # NPM publish package
@@ -407,18 +408,6 @@ npm login
 npm publish
 npm verison patch
 npm publish --access=public
-```
-# Bash                       
-```
-mcedit ~/.bashrc
-source ~/.bashrc -                                
-cat ~/.bash_history -----                             
-which package -----                
-df -h               
-du -sm /var/lib/lxd/containers/name ---                  
-iptables -nvL -t nat -                  
-
-sudo sshfs -o allow_other root@10.96.222.13:/var/www/html /mnt/projects/crm/
 ```
 
 # GIT commands
