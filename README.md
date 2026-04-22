@@ -29,10 +29,12 @@ class ForceJson
     }
 }
 ```
+#### УСТАНОВКА КОНФИГА CORS
 ```
-// Настройка CORS
 php artisan config:publish cors
-// bootstrap/app.php
+```
+##### КОД /bootstrap/app.php
+```
 <?php
 
 use Illuminate\Foundation\Application;
@@ -128,13 +130,14 @@ return Application::configure(basePath: dirname(__DIR__))
         });
     })
     ->create();
-//Можно удалить
+```
+[!NOTE]
+Можно удалить
 /routes/web.php
 /resources/*
 tailwindcss
 vite.config.js
 package.json
-```
 # LXC commands
 ```
 // Создание контейнера UBUNTU
