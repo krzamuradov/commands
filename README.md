@@ -33,6 +33,27 @@ class ForceJson
 ```
 php artisan config:publish cors
 ```
+```
+return [
+       'paths' => ['*'],
+       'allowed_methods' => ['GET', 'POST', 'PUT', 'OPTIONS'],
+       'allowed_origins' => ['https://localhost82'], // РАЗРЕШЁННЫЕ АДРЕСА
+       'allowed_origins_patterns' => [],
+       'allowed_headers' => ['Origin', 'Content-Type', 'X-Auth-Token', 'Cookie'],
+       'exposed_headers' => [],
+       'max_age' => 0,
+       'supports_credentials' => true,
+];
+```
+```
+php artisan config:clear
+```
+```
+php artisan route:clear
+```
+```
+php artisan cache:clear
+```
 ##### КОД /bootstrap/app.php
 ```
 <?php
@@ -156,6 +177,22 @@ curl -s https://getcomposer.org/installer | php
 ```
 mv composer.phar /usr/local/bin/composer
 ```
+### УСТАНОВКА NODE.JS
+##### Добавляем репозиторий Node.js (например, LTS 20)
+```
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+```
+##### УСТАНОВКА NODE.JS (вместе с NPM)
+```
+apt install -y nodejs
+```
+
+##### ПРОВЕРКА
+```
+node -v
+npm -v
+```
+
 # УСТАНОВКА И НАСТРОЙКА MARIADB
 ##### УСТАНОВКА
 ```
@@ -187,6 +224,28 @@ systemctl unset-environment MYSQLD_OPTS
 ```
 systemctl restart mariadb
 ```
+# УСТАНОВКА PHPMYADMIN
+```
+apt install phpmyadmin -y
+```
+```
+ln -s /usr/share/phpmyadmin /var/www/
+```
+# УСТАНОВКА И НАСТРОЙКА SQLITE3
+#### УСТАНОВКА
+```
+apt-get install php-sqlite3
+```
+> [!NOTE]
+> Нужно раскомментировать в php.ini
+> ;extension=pdo_sqlite
+> ;extension=sqlite3
+
+#### ПРОВЕРКА
+```
+php -m | grep sqlite
+```
+
 # УСТАНОВКА И НАСТРОЙКА NGINX
 #### УСТАНОВКА
 ```
@@ -260,7 +319,7 @@ server {
     }
 }
 ```
-#### NGINX CONF FOR ONLY PHP PROJECT
+#### НАСТРОЙКА NGINX ДЛЯ ПРОЕКТА НА LARAVEL БЕЗ VUE
 ```
 server {
     listen 80;
@@ -292,27 +351,25 @@ server {
     }
 }
 ```
-
-# MARIADB
+# НАСТРОКА РАЗМЕРА ЗАГРУЖАЕМОГО НА СЕРВЕР ФАЙЛА
+#### NGINX
 ```
-apt install mariadb-server -y
-
-systemctl stop mariadb
-systemctl set-environment MYSQLD_OPTS="--skip-grant-tables --skip-networking"
-systemctl start mariadb
-systemctl status mariadb
-mysql -u root
-FLUSH PRIVILEGES;
-ALTER USER 'root'@'localhost' IDENTIFIED BY 'password';
-systemctl unset-environment MYSQLD_OPTS
-systemctl restart mariadb
+client_max_body_size 20M;
 ```
-
-# PHPMYADMIN
+#### PHP
+>[!NOTE]
+> РЕДАКТИРУЕМ ФАЙЛ /etc/php/8.2/fpm/php.ini
 ```
-apt install phpmyadmin
-ln -s /usr/share/phpmyadmin /var/www/
-```    
+post_max_size = 20M
+upload_max_filesize = 20M
+```
+###### ПЕРЕЗАПУСК
+```
+sudo systemctl restart php8.2-fpm
+```
+```
+sudo systemctl reload nginx
+```
 
 # Полезные пакеты NPM
 ```
@@ -342,7 +399,6 @@ dayjs
 import dayjs from 'dayjs';
 dayjs(meeting.meeting_at).format('DD.MM.YYYY')
 
-
 ```
 # NPM publish package
 ```
@@ -352,13 +408,6 @@ npm publish
 npm verison patch
 npm publish --access=public
 ```
-
-# LARAVEL INSTALL
-```
-composer create-project --prefer-dist laravel/laravel ./ ^10
-```
-
-
 # Bash                       
 ```
 mcedit ~/.bashrc
@@ -371,18 +420,6 @@ iptables -nvL -t nat -
 
 sudo sshfs -o allow_other root@10.96.222.13:/var/www/html /mnt/projects/crm/
 ```
-# SQLITE3
-
-> [!NOTE]
-> Нужно раскомментировать в php.ini
-> ;extension=pdo_sqlite
-> ;extension=sqlite3
-```
-sudo apt-get update
-sudo apt-get install php-sqlite3
-php -m | grep sqlite  проверка sqlite
-```
-
 
 # GIT commands
 ```
@@ -407,14 +444,13 @@ git config --global user.email "your_email@example.com"
 
 ```
 
-
-
-# Vuetify install example
+# УСТАНОВКА И НАСТРОЙКА Vuetify
+##### УСТАНОВКА
 ```
 npm install vuetify@next sass sass-loader @mdi/font
 ```
+#### ПОДКЛЮЧЕНИЕ В app.js
 ```
-// Импорт Vuetify
 import { createVuetify } from 'vuetify';
 import 'vuetify/styles'; // Стили Vuetify
 import '@mdi/font/css/materialdesignicons.css'; // Иконки
@@ -435,7 +471,7 @@ const vuetify = createVuetify({
 createApp(App).use(vuetify).mount('#app');
 ```
 
-# PHP PROD SERVICE PROVIDER
+# SERVICE PROVIDER ДЛЯ PRODUCTION ЧТОБЫ ВСЕГДА ИСПОЛЬЗОВАЛСЯ HTTPS
 ```
 class AppServiceProvider extends ServiceProvider
 {
@@ -458,7 +494,7 @@ class AppServiceProvider extends ServiceProvider
     }
 ```
 
-# LARAVEL VALIDATION CUSTOM RESPONSE
+# ОТПРАВКА СВОЕГО СООБЩЕНИЯ ПРИ ВАЛИДАЦИИ
 ```
 
 use Illuminate\Contracts\Validation\Validator;
@@ -475,10 +511,13 @@ use Illuminate\Validation\ValidationException;
     }
 ```
 
-# VSCODE SETTINGS JS IN LARAVEL PROJECT 
+# VSCODE SETTINGS JS IN LARAVEL PROJECT
+> [!NOTE]
+> СОЗДАЁМ В КОРНЕ ФАЙЛ jsconfig.json
+
+###### ДЛЯ МОНОЛИТНОГО ПРОЕКТА
 ```
-// CREATE jsconfig.json
-//FOR LARAVEL
+
 {
     "compilerOptions": {
       "baseUrl": "./",
@@ -492,7 +531,9 @@ use Illuminate\Validation\ValidationException;
     "exclude": ["node_modules", "public"],
     "include": ["resources/js/**/*"]
   }
-//FOR VUE ONLY
+```
+###### ДЛЯ ПРОЕКТА НА VUE.JS
+```
 {
     "compilerOptions": {
       "baseUrl": "./",
@@ -539,13 +580,11 @@ Ctrl + Shift + P → Preferences: Open Settings (JSON)
     "typescript.preferences.importModuleSpecifier": "non-relative"
 }
 
-
-
 ```
 # PRETTIER CONFIG
+> [!NOTE]
+> СОЗДАЁМ В КОРНЕ ФАЙЛ .prettierrc
 ```
-// CREATE .prettierrc 
-
 {
     "semi": true,
     "singleQuote": false,
@@ -557,16 +596,20 @@ Ctrl + Shift + P → Preferences: Open Settings (JSON)
     "printWidth": 170,
     "vueIndentScriptAndStyle": true
 }
-
-CREATE .prettierignore
+```
+> [!NOTE]
+> СОЗДАЁМ В КОРНЕ ФАЙЛ .prettierignore
+```
 node_modules/
 dist/
 public/
 
-
 ```
 
 # COMPOSER PLUGIN FOR INTERFACE SERVICE 
+> [!NOTE]
+> ПАКЕТ ДЛЯ ТОГО ЧТОБЫ МОЖНО БЫЛО ПИСАТЬ СРАЗУ
+> php artisan make:interface,php artisan make:service
 ```
 composer require theanik/laravel-more-command --dev
 ```
@@ -593,43 +636,7 @@ console.log(formattedDate);
 
 ```
 
-# LARAVEL CORS CONFIG
-```
-php artisan config:publish cors
 
-return [
-       'paths' => ['*'],
-       'allowed_methods' => ['GET', 'POST', 'PUT', 'OPTIONS'],
-       'allowed_origins' => ['https://localhost82'],
-       'allowed_origins_patterns' => [],
-       'allowed_headers' => ['Origin', 'Content-Type', 'X-Auth-Token', 'Cookie'],
-       'exposed_headers' => [],
-       'max_age' => 0,
-       'supports_credentials' => true,
-];
-
-php artisan config:clear
-php artisan route:clear
-php artisan cache:clear
-
-```
-
-# FILE UPLOAD SIZE
-## NGINX
-```
-client_max_body_size 20M;
-```
-## PHP
-```
-///etc/php/8.2/fpm/php.ini
-post_max_size = 20M
-upload_max_filesize = 20M
-```
-```
-#bash
-sudo systemctl restart php8.2-fpm
-sudo systemctl reload nginx
-```
 ## INERTIA SETTINGS
 ```
 composer require inertiajs/inertia-laravel
