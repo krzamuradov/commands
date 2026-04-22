@@ -3,11 +3,16 @@
 ```
 composer create-project laravel/laravel ./ ^11
 ```
+#### В LARAVEL 11+ НЕ ПРЕДУСТАНОВЛЕНА РАБОТА С API ДЛЯ УСТАНОВКИ
 ```
-// Устанавливаем API
 php artisan install:api
-// Создаём middleware для JSON ответов.
+```
+#### СОЗДАЁМ MIDDLEWARE ДЛЯ ТОГО ЧТОБЫ ОТВЕТЫ ВСЕГДА БЫЛИ В ВИДЕ JSON
+```
 php artisan make:middleware ForceJson
+```
+##### КОД MIDDLEWARE FORCEJSON
+```
 class ForceJson
 {
     /**
@@ -23,6 +28,8 @@ class ForceJson
         return $response;
     }
 }
+```
+```
 // Настройка CORS
 php artisan config:publish cors
 // bootstrap/app.php
