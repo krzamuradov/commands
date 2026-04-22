@@ -131,13 +131,8 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->create();
 ```
-[!NOTE]
-Можно удалить
-/routes/web.php
-/resources/*
-tailwindcss
-vite.config.js
-package.json
+> [!NOTE]
+> Можно удалить /routes/web.php /resources/* tailwindcss vite.config.js package.json
 # LXC commands
 ```
 // Создание контейнера UBUNTU
