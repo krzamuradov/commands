@@ -1,7 +1,9 @@
-# Laravel settings API-only
+# НАСТРОЙКИ Laravel ПОД API-only
+#### Создаём проект
 ```
-// Создаём проект
 composer create-project laravel/laravel ./ ^11
+```
+```
 // Устанавливаем API
 php artisan install:api
 // Создаём middleware для JSON ответов.
