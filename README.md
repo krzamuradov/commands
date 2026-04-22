@@ -1,164 +1,3 @@
-# НАСТРОЙКИ Laravel ПОД API-only
-#### Создаём проект
-```
-composer create-project laravel/laravel ./ ^11
-```
-#### В LARAVEL 11+ НЕ ПРЕДУСТАНОВЛЕНА РАБОТА С API ДЛЯ УСТАНОВКИ
-```
-php artisan install:api
-```
-#### СОЗДАЁМ MIDDLEWARE ДЛЯ ТОГО ЧТОБЫ ОТВЕТЫ ВСЕГДА БЫЛИ В ВИДЕ JSON
-```
-php artisan make:middleware ForceJson
-```
-##### КОД MIDDLEWARE FORCEJSON
-```
-class ForceJson
-{
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
-    public function handle(Request $request, Closure $next)
-    {
-        $request->headers->set('Accept', 'application/json');
-        $response = $next($request);
-        $response->headers->set('Content-Type', 'application/json');
-        return $response;
-    }
-}
-```
-#### УСТАНОВКА КОНФИГА CORS
-```
-php artisan config:publish cors
-```
-```
-return [
-       'paths' => ['*'],
-       'allowed_methods' => ['GET', 'POST', 'PUT', 'OPTIONS'],
-       'allowed_origins' => ['https://localhost82'], // РАЗРЕШЁННЫЕ АДРЕСА
-       'allowed_origins_patterns' => [],
-       'allowed_headers' => ['Origin', 'Content-Type', 'X-Auth-Token', 'Cookie'],
-       'exposed_headers' => [],
-       'max_age' => 0,
-       'supports_credentials' => true,
-];
-```
-```
-php artisan config:clear
-```
-```
-php artisan route:clear
-```
-```
-php artisan cache:clear
-```
-##### КОД /bootstrap/app.php
-```
-<?php
-
-use Illuminate\Foundation\Application;
-use Illuminate\Foundation\Configuration\Exceptions;
-use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Illuminate\Auth\AuthenticationException;
-
-return Application::configure(basePath: dirname(__DIR__))
-    ->withRouting(
-        // Web-маршруты отключаем — никакого HTML
-        web: null,
-
-        // Только API-маршруты
-        api: __DIR__ . '/../routes/api.php',
-
-        // Консольные команды
-        commands: __DIR__ . '/../routes/console.php',
-
-        // Health-check (опционально)
-        health: '/up',
-    )
-    ->withMiddleware(function (Middleware $middleware) {
-        // Подключаем API middleware
-        $middleware->api(prepend: [
-            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-        ]);
-
-        // Убираем лишнее из web стека
-        $middleware->web(remove: [
-            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-        ]);
-        $middleware->append(\Illuminate\Http\Middleware\HandleCors::class);
-
-        $middleware->append(\App\Http\Middleware\ForceJson::class);
-
-        // alias — если хотите использовать как именованный middleware
-        $middleware->alias([
-            'force.json' => \App\Http\Middleware\ForceJson::class,
-        ]);
-    })
-    ->withExceptions(function (Exceptions $exceptions) {
-        // Ошибки валидации
-        $exceptions->render(function (ValidationException $e) {
-            return new JsonResponse([
-                'message' => 'Validation failed',
-                'errors'  => $e->errors(),
-            ], 422);
-        });
-
-        // Неавторизован
-        $exceptions->render(function (AuthenticationException $e) {
-            return new JsonResponse([
-                'message' => 'Unauthenticated',
-            ], 401);
-        });
-
-        // Доступ запрещён
-        $exceptions->render(function (AccessDeniedHttpException $e) {
-            return new JsonResponse([
-                'message' => 'Forbidden',
-            ], 403);
-        });
-
-        // Не найдено
-        $exceptions->render(function (NotFoundHttpException $e) {
-            return new JsonResponse([
-                'message' => 'Api Not Found',
-            ], 404);
-        });
-
-        // Любая другая HTTP ошибка
-        $exceptions->render(function (HttpException $e) {
-            return new JsonResponse([
-                'message' => $e->getMessage() ?: 'HTTP Error',
-            ], $e->getStatusCode());
-        });
-
-        // Все остальные ошибки (в т.ч. 500)
-        $exceptions->render(function (Throwable $e) {
-            return new JsonResponse([
-                'message' => config('app.debug')
-                    ? $e->getMessage()
-                    : 'Server Error',
-                'trace' => config('app.debug')
-                    ? $e->getTrace()
-                    : [],
-            ], 500);
-        });
-    })
-    ->create();
-```
-> [!NOTE]
-> Можно удалить /routes/web.php /resources/* tailwindcss vite.config.js package.json
-# LXC commands
-```
-// Создание контейнера UBUNTU
-lxc launch ubuntu:22.04 ubuntu
-```
 # НАСТРОЙКА ЧИСТОГО СЕРВЕРА
 ### БАЗОВЫЕ УСТАНОВКИ
 ```
@@ -432,6 +271,164 @@ git config --global user.name "Ваше Имя"
 git config --global user.email "your_email@example.com"
 
 ```
+
+# НАСТРОЙКИ Laravel ПОД API-only
+#### Создаём проект
+```
+composer create-project laravel/laravel ./ ^11
+```
+#### В LARAVEL 11+ НЕ ПРЕДУСТАНОВЛЕНА РАБОТА С API ДЛЯ УСТАНОВКИ
+```
+php artisan install:api
+```
+#### СОЗДАЁМ MIDDLEWARE ДЛЯ ТОГО ЧТОБЫ ОТВЕТЫ ВСЕГДА БЫЛИ В ВИДЕ JSON
+```
+php artisan make:middleware ForceJson
+```
+##### КОД MIDDLEWARE FORCEJSON
+```
+class ForceJson
+{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     */
+    public function handle(Request $request, Closure $next)
+    {
+        $request->headers->set('Accept', 'application/json');
+        $response = $next($request);
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+}
+```
+#### УСТАНОВКА КОНФИГА CORS
+```
+php artisan config:publish cors
+```
+```
+return [
+       'paths' => ['*'],
+       'allowed_methods' => ['GET', 'POST', 'PUT', 'OPTIONS'],
+       'allowed_origins' => ['https://localhost82'], // РАЗРЕШЁННЫЕ АДРЕСА
+       'allowed_origins_patterns' => [],
+       'allowed_headers' => ['Origin', 'Content-Type', 'X-Auth-Token', 'Cookie'],
+       'exposed_headers' => [],
+       'max_age' => 0,
+       'supports_credentials' => true,
+];
+```
+```
+php artisan config:clear
+```
+```
+php artisan route:clear
+```
+```
+php artisan cache:clear
+```
+##### КОД /bootstrap/app.php
+```
+<?php
+
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Illuminate\Auth\AuthenticationException;
+
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        // Web-маршруты отключаем — никакого HTML
+        web: null,
+
+        // Только API-маршруты
+        api: __DIR__ . '/../routes/api.php',
+
+        // Консольные команды
+        commands: __DIR__ . '/../routes/console.php',
+
+        // Health-check (опционально)
+        health: '/up',
+    )
+    ->withMiddleware(function (Middleware $middleware) {
+        // Подключаем API middleware
+        $middleware->api(prepend: [
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+        ]);
+
+        // Убираем лишнее из web стека
+        $middleware->web(remove: [
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        ]);
+        $middleware->append(\Illuminate\Http\Middleware\HandleCors::class);
+
+        $middleware->append(\App\Http\Middleware\ForceJson::class);
+
+        // alias — если хотите использовать как именованный middleware
+        $middleware->alias([
+            'force.json' => \App\Http\Middleware\ForceJson::class,
+        ]);
+    })
+    ->withExceptions(function (Exceptions $exceptions) {
+        // Ошибки валидации
+        $exceptions->render(function (ValidationException $e) {
+            return new JsonResponse([
+                'message' => 'Validation failed',
+                'errors'  => $e->errors(),
+            ], 422);
+        });
+
+        // Неавторизован
+        $exceptions->render(function (AuthenticationException $e) {
+            return new JsonResponse([
+                'message' => 'Unauthenticated',
+            ], 401);
+        });
+
+        // Доступ запрещён
+        $exceptions->render(function (AccessDeniedHttpException $e) {
+            return new JsonResponse([
+                'message' => 'Forbidden',
+            ], 403);
+        });
+
+        // Не найдено
+        $exceptions->render(function (NotFoundHttpException $e) {
+            return new JsonResponse([
+                'message' => 'Api Not Found',
+            ], 404);
+        });
+
+        // Любая другая HTTP ошибка
+        $exceptions->render(function (HttpException $e) {
+            return new JsonResponse([
+                'message' => $e->getMessage() ?: 'HTTP Error',
+            ], $e->getStatusCode());
+        });
+
+        // Все остальные ошибки (в т.ч. 500)
+        $exceptions->render(function (Throwable $e) {
+            return new JsonResponse([
+                'message' => config('app.debug')
+                    ? $e->getMessage()
+                    : 'Server Error',
+                'trace' => config('app.debug')
+                    ? $e->getTrace()
+                    : [],
+            ], 500);
+        });
+    })
+    ->create();
+```
+> [!NOTE]
+> Можно удалить /routes/web.php /resources/* tailwindcss vite.config.js package.json
+
 
 # УСТАНОВКА И НАСТРОЙКА Vuetify
 ##### УСТАНОВКА
