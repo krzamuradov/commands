@@ -507,33 +507,35 @@ use Illuminate\Validation\ValidationException;
 
 {
     "compilerOptions": {
-      "baseUrl": "./",
-      "paths": {
-        "@/*": ["resources/js/*"]
-      },
-      "module": "ESNext",
-      "target": "ES6",
-      "moduleResolution": "Node"
+        "baseUrl": "./",
+        "paths": {
+            "@/*": ["resources/js/*"]
+        },
+        "module": "ESNext",
+        "target": "ES6",
+        "moduleResolution": "Node"
     },
     "exclude": ["node_modules", "public"],
     "include": ["resources/js/**/*"]
-  }
+}
+
 ```
 ###### ДЛЯ ПРОЕКТА НА VUE.JS
 ```
 {
     "compilerOptions": {
-      "baseUrl": "./",
-      "paths": {
-        "@/*": ["src/*"]
-      },
-      "module": "ESNext",
-      "target": "ES6",
-      "moduleResolution": "Node"
+        "baseUrl": "./",
+        "paths": {
+            "@/*": ["src/*"]
+        },
+        "module": "ESNext",
+        "target": "ES6",
+        "moduleResolution": "Node"
     },
     "exclude": ["node_modules", "public"],
     "include": ["src/**/*"]
-  }
+}
+
 ```
 # VSCODE CONFIG
 ```
